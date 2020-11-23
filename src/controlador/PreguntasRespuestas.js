@@ -82,21 +82,18 @@ const actualizar = async (req, res) => {
         let { respuestas } = req.body;
         sql = `UPDATE respuestas SET nombre = ? WHERE id = ?`;
         for (let i = 0; i < respuestas.length; i++) {
-            {
-                [data] = await Connection.query(sql, [respuestas[i].nombre, respuestas[i].id]);
+            if (respuestas[i].del) {
+                let del = `DELETE FROM respuestas WHERE id = ?`;
+                await Connection.query(del, [respuestas[i].id])
+            } else if (respuestas[i].id > 1) {
+                await Connection.query(sql, [respuestas[i].nombre, respuestas[i].id])
+            } else if (respuestas[i].id == 0) {
+                let newSql = `INSERT INTO respuestas (nombre, id_pregunta) values (?,?)`;
+                await Connection.query(newSql, [respuestas[i].nombre, id])
             }
-        }
-
-        if (!data) {
-            return res.json({
-                ok: false,
-                data: [],
-                mensaje: "Pregunta actualizada - Error al actualizada las respuestas"
-            })
         }
         res.json({
             ok: true,
-            data,
             mensaje: "Pregunta actualizada"
         })
     }
@@ -105,36 +102,27 @@ const actualizar = async (req, res) => {
 const eliminar = async (req, res) => {
 
     let { id } = req.params;
-    let sql = `DELETE FROM preguntas WHERE id = ?`;
-    let [nuevaPregunta] = await Connection.query(sql, [id]);
-    if (!nuevaPregunta) {
+    let { respuestas } = req.body;
+    let sql = `DELETE FROM respuestas WHERE id = ?`;
+    let pregunta = null;
+    for (let i = 0; i < respuestas.length; i++) {
+        {
+            [pregunta] = await Connection.query(sql, [respuestas[i].id]);
+        }
+    }
+    if (!pregunta) {
         return res.json({
             ok: false,
             data: [],
             mensaje: "Error al eliminar"
         })
-    } else {
-        let { respuestas } = req.body;
-        sql = `DELETE FROM respuestas WHERE id = ?`;
-        for (let i = 0; i < respuestas.length; i++) {
-            {
-                [data] = await Connection.query(sql, [respuestas[i].id]);
-            }
-        }
-
-        if (!data) {
-            return res.json({
-                ok: false,
-                data: [],
-                mensaje: "Pregunta eliminada - Error al eliminar las respuestas"
-            })
-        }
-        res.json({
-            ok: true,
-            data,
-            mensaje: "Pregunta eliminada"
-        })
     }
+    sql = `DELETE FROM preguntas WHERE id = ?`;
+    await Connection.query(sql, [id]);
+    res.json({
+        ok: true,
+        mensaje: "Pregunta eliminada"
+    });
 };
 
 module.exports = {

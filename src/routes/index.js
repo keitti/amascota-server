@@ -27,7 +27,7 @@ rutas.put("/mascota/:id", mascota.actualizar);
 rutas.delete("/mascota/:id", mascota.eliminar);
 
 const mascota_ideal = require("../controlador/MascotaIdeal");
-rutas.get("/mascota_ideal/:estado", mascota_ideal.listar);
+rutas.get("/mascota_ideal", mascota_ideal.listar);
 rutas.post("/mascota_ideal", mascota_ideal.registrar);
 rutas.put("/mascota_ideal/:id", mascota_ideal.actualizar);
 rutas.delete("/mascota_ideal/:id", mascota_ideal.eliminar);
@@ -36,6 +36,10 @@ const preguntas = require("../controlador/PreguntasRespuestas");
 rutas.get("/preguntas", preguntas.listar);
 rutas.post("/preguntas", preguntas.registrar);
 rutas.put("/preguntas/:id", preguntas.actualizar);
-rutas.delete("/preguntas/:id", preguntas.eliminar);
+rutas.post("/preguntas/eliminar/:id", preguntas.eliminar);
+
+const files = require("../controlador/files/controllers");
+rutas.get("/file/:name", files.getFile);
+rutas.post("/file/:name", files.setFile);
 
 module.exports = rutas;

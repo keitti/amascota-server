@@ -2,9 +2,9 @@ const Connection = require("../config");
 const moment = require("moment");
 
 const registrar = async (req, res) => {
-    let { nombre, descripcion } = req.body;
-    let sql = `INSERT INTO tips (nombre,descripcion,fecha_registro,estado) values (?,?,?,?)`;
-    let [data] = await Connection.query(sql, [nombre, descripcion, moment().format('YYYY-MM-DD h:mm:ss'), 1]);
+    let { nombre, descripcion, imagen } = req.body;
+    let sql = `INSERT INTO tips (nombre,descripcion,imagen, fecha_registro,estado) values (?,?,?,?,?)`;
+    let [data] = await Connection.query(sql, [nombre, descripcion, imagen, moment().format('YYYY-MM-DD h:mm:ss'), 1]);
     if (!data) {
         return res.json({
             ok: false,
@@ -36,10 +36,10 @@ const listar = async (req, res) => {
 
 const actualizar = async (req, res) => {
     let { id } = req.params;
-    let { nombre, descripcion } = req.body;
+    let { nombre, descripcion, imagen } = req.body;
 
-    let sql = `UPDATE tips SET nombre = ?, descripcion = ? WHERE id = ?`;
-    let [result] = await Connection.query(sql, [nombre, descripcion, id]);
+    let sql = `UPDATE tips SET nombre = ?, descripcion = ?, imagen = ? WHERE id = ?`;
+    let [result] = await Connection.query(sql, [nombre, descripcion, imagen, id]);
     if (!result) {
         return res.json({
             ok: false,

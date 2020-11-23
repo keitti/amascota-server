@@ -51,9 +51,24 @@ const listar = async (req, res) => {
 const login = async (req, res) => {
     let { correo } = req.body;
 
-    let sql = "SELECT * FROM usuario WHERE correo = ?";
+    let sql = `SELECT 
+        usuario.id,
+        usuario.nombre,
+        usuario.correo,
+        usuario.contraseña,
+        usuario.fecha_registro,
+        usuario.estado,
+        usuario.rol,
+        mascota.nombre as mascota,
+        mascota.edad,
+        mascota.ultima_fecha_vacunacion,
+        mascota.color,
+        mascota.pelaje,
+        mascota.descripcion,
+        mascota.id as idMascota
+    FROM usuario, mascota WHERE correo = ? AND mascota.id_propietario = usuario.id`;
     const [rows, fields] = await Connection.query(sql, [correo]);
-    if (!rows) {
+    if (!rows.length) {
         return res.json({
             ok: false,
             data: []
@@ -73,8 +88,22 @@ const login = async (req, res) => {
 };
 const reAuth = async (req, res) => {
     let { correo } = req.body;
-    console.log(correo)
-    let sql = "SELECT * FROM usuario WHERE correo = ?";
+    let sql = `SELECT 
+        usuario.id,
+        usuario.nombre,
+        usuario.correo,
+        usuario.contraseña,
+        usuario.fecha_registro,
+        usuario.estado,
+        usuario.rol,
+        mascota.nombre as mascota,
+        mascota.edad,
+        mascota.ultima_fecha_vacunacion,
+        mascota.color,
+        mascota.pelaje,
+        mascota.descripcion,
+        mascota.id as idMascota
+    FROM usuario, mascota WHERE correo = ? AND mascota.id_propietario = usuario.id`;
     const [rows, fields] = await Connection.query(sql, [correo]);
     if (!rows.length) {
         return res.json({
